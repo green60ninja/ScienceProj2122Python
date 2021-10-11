@@ -88,6 +88,11 @@ inclination_entry = Entry(root, width=25)
 inclination_entry.insert(0, "Inclination")
 inclination_entry.pack()
 
+omega = 0
+ascension_entry = Entry(root, width=25)
+ascension_entry.insert(0, "Right ascension of ascending node")
+ascension_entry.pack()
+
 w = 0
 perigee_entry = Entry(root, width=25)
 perigee_entry.insert(0, "Argument of perigee")
@@ -95,7 +100,7 @@ perigee_entry.pack()
 
 
 def submit():
-    global a, e, inclin, w
+    global a, e, inclin, omega, w
     # print(semimajor_entry.get())
     # print(eccentricity_entry.get())
     # print(inclination_entry.get())
@@ -104,18 +109,22 @@ def submit():
     a = semimajor_entry.get()
     e = eccentricity_entry.get()
     inclin = inclination_entry.get()
+    omega = ascension_entry.get()
     w = perigee_entry.get()
 
     frame = Frame(root, height=20, width=100).pack()
     l1 = Label(frame, text="Semimajor axis: "+a).pack()
     l2 = Label(frame, text="Eccentricity: "+e).pack()
     l3 = Label(frame, text="Inclination: "+inclin).pack()
+    l3 = Label(frame, text="Right ascension of ascending node: " + omega).pack()
     l4 = Label(frame, text="Argument of perigee: "+w).pack()
 
     semimajor_entry.pack_forget()
     eccentricity_entry.pack_forget()
     inclination_entry.pack_forget()
+    ascension_entry.pack_forget()
     perigee_entry.pack_forget()
+    button.pack_forget()
 
 
 button = Button(root, text="Submit", command=submit)
