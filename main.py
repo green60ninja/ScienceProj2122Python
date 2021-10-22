@@ -5,10 +5,14 @@ from PIL import Image, ImageTk
 from pynput import keyboard
 import threading
 import time
+from sympy import *  # See https://docs.sympy.org/latest/index.html for documentation
 
 
 # Orbital object class (i.e. planet, satellite, moon, etc.
 # Has some general info
+from sympy.utilities.lambdify import implemented_function
+
+
 class OrbitObj:
     # Instantiated with mass.
     def __init__(self, mass):
@@ -65,15 +69,23 @@ canvas.pack()
 
 
 # ---------------UI CODE---------------
-
-
 def incremenet():
-    global t
+    global t, a, e
     while True:
         t += 1
         time.sleep(1)
         t_string.set(str(t))
         root.update_idletasks()
+
+        if int(t_string.get()) != 0:
+            # TODO: Implement math for conversion
+            period = math.sqrt(a**3)
+            mean_anomaly = (2 * math.pi * t) // period
+            x = Symbol('x')  # This is the eccentricity anomaly
+            equation = x - e * sin(x) - mean_anomaly
+            f_diff = equation.diff()
+            best_guess = mean_anomaly - (equation.subs(x, mean_anomaly) // f_diff.subs(x, mean_anomaly))
+            print(best_guess)
 
 
 t1 = threading.Thread(target=incremenet)
