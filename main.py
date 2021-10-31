@@ -6,6 +6,7 @@ from pynput import keyboard
 import threading
 import time
 from sympy import *  # See https://docs.sympy.org/latest/index.html for documentation
+from orbital.utilities import eccentric_anomaly_from_mean
 
 
 # Orbital object class (i.e. planet, satellite, moon, etc.
@@ -77,42 +78,30 @@ def incremenet():
         root.update_idletasks()
 
         if int(t_string.get()) != 0:
-            # Finding eccentricity anomaly using method on this website: http://orbitsimulator.com/sheela/kepler.htm
-            to_radians = math.pi / 180
-            mean_anomaly = 4.105 * to_radians  # Placeholder value. TODO: Implement math for mean anomaly and convert to radians
-            # TODO: Find out what diff and epsilon are?
-            diff = 100
-            epsilon = 0.0001
-
-            e_anom_old = mean_anomaly + e // 2
-            while diff > epsilon:
-                e_anom_new = e_anom_old - (e_anom_old * (math.sin(e_anom_old)) - mean_anomaly) // (1 - e * (math.cos(e_anom_old)))
-                diff = abs(e_anom_old - e_anom_new)
-                e_anom_old = e_anom_new
-
-            e_anom_new = e_anom_new // to_radians
-            print("Eccentricity anomaly: "+str(e_anom_new))
-
-
+            # Finding eccentricity anomaly using
+            # orbitalpy library: https://github.com/RazerM/orbital/blob/master/orbital/utilities.py#:~:text=def%20eccentric_anomaly_from_mean(e,return%20E
+            mean_anomaly = 4.105 * (math.pi / 180.0)
+            eccentricity_anomaly = eccentric_anomaly_from_mean(e, mean_anomaly) / (math.pi / 180.0)
+            print("Eccentricity anomaly: "+str(eccentricity_anomaly))
 
             # Cartesian coordinates
-            x = a * ((math.cos(e_anom_new) - e) *
+            x = a * ((math.cos(eccentricity_anomaly) - e) *
                      (math.cos(w) * math.cos(omega) - math.sin(w) * math.sin(omega) * math.cos(inclin)) +
-                     ((1-(e**2))**0.5) * (math.sin(e_anom_new) *
+                     ((1-(e**2))**0.5) * (math.sin(eccentricity_anomaly) *
                                           (-math.sin(w) * math.cos(omega) -
                                            math.cos(w) * math.sin(omega) * math.cos(inclin)))
                      )
-            y = a * ((math.cos(e_anom_new) - e) *
+            y = a * ((math.cos(eccentricity_anomaly) - e) *
                      (math.cos(w) * math.cos(omega) - math.sin(w) * math.sin(omega) * math.cos(inclin)) +
                      ((1-e**2)**0.5) *
-                     (math.sin(e_anom_new) * (-math.sin(w) * math.cos(omega) - math.cos(w) * math.sin(omega) *
+                     (math.sin(eccentricity_anomaly) * (-math.sin(w) * math.cos(omega) - math.cos(w) * math.sin(omega) *
                                               math.cos(inclin)))
                      )
-            z = a * ((math.cos(e_anom_new) - e) *
+            z = a * ((math.cos(eccentricity_anomaly) - e) *
                      (math.sin(w) * math.sin(inclin)) +
-                     ((1-e**2)**0.5) * (math.sin(e_anom_new) * (math.cos(w) * math.sin(inclin)))
+                     ((1-e**2)**0.5) * (math.sin(eccentricity_anomaly) * (math.cos(w) * math.sin(inclin)))
                      )
-            print(str(x) + ", " + str(y) + ", " +  str(z))
+            # print(str(x) + ", " + str(y) + ", " +  str(z))
 
 
 t1 = threading.Thread(target=incremenet)
