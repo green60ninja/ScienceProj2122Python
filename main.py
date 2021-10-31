@@ -24,7 +24,6 @@ G = 6.67430 * pow(10, -11)  # Newtonian constant of gravitation
 t = 0  # TIME (increments every second)
 
 # Declaring the objects for the moon and the satellite in orbit.
-# TODO: Use Keplerian element conversion to find latitude and longitude for satellite
 moon = OrbitObj(mass=7.34767309 * pow(10, 22))
 sat = OrbitObj(mass=1916)  # Mass: (National Aeronautics and Space Administration, 2009)
 
@@ -70,7 +69,7 @@ canvas.pack()
 
 # ---------------UI CODE---------------
 def incremenet():
-    global t, a, e
+    global t, a, e, inclin, omega, w
     while True:
         t += 1
         time.sleep(1)
@@ -78,14 +77,42 @@ def incremenet():
         root.update_idletasks()
 
         if int(t_string.get()) != 0:
-            # TODO: Implement math for conversion
-            period = math.sqrt(a**3)
-            mean_anomaly = (2 * math.pi * t) // period
-            x = Symbol('x')  # This is the eccentricity anomaly
-            equation = x - e * sin(x) - mean_anomaly
-            f_diff = equation.diff()
-            best_guess = mean_anomaly - (equation.subs(x, mean_anomaly) // f_diff.subs(x, mean_anomaly))
-            print(best_guess)
+            # Finding eccentricity anomaly using method on this website: http://orbitsimulator.com/sheela/kepler.htm
+            to_radians = math.pi / 180
+            mean_anomaly = 4.105 * to_radians  # Placeholder value. TODO: Implement math for mean anomaly and convert to radians
+            # TODO: Find out what diff and epsilon are?
+            diff = 100
+            epsilon = 0.0001
+
+            e_anom_old = mean_anomaly + e // 2
+            while diff > epsilon:
+                e_anom_new = e_anom_old - (e_anom_old * (math.sin(e_anom_old)) - mean_anomaly) // (1 - e * (math.cos(e_anom_old)))
+                diff = abs(e_anom_old - e_anom_new)
+                e_anom_old = e_anom_new
+
+            e_anom_new = e_anom_new // to_radians
+            print("Eccentricity anomaly: "+str(e_anom_new))
+
+
+
+            # Cartesian coordinates
+            x = a * ((math.cos(e_anom_new) - e) *
+                     (math.cos(w) * math.cos(omega) - math.sin(w) * math.sin(omega) * math.cos(inclin)) +
+                     ((1-(e**2))**0.5) * (math.sin(e_anom_new) *
+                                          (-math.sin(w) * math.cos(omega) -
+                                           math.cos(w) * math.sin(omega) * math.cos(inclin)))
+                     )
+            y = a * ((math.cos(e_anom_new) - e) *
+                     (math.cos(w) * math.cos(omega) - math.sin(w) * math.sin(omega) * math.cos(inclin)) +
+                     ((1-e**2)**0.5) *
+                     (math.sin(e_anom_new) * (-math.sin(w) * math.cos(omega) - math.cos(w) * math.sin(omega) *
+                                              math.cos(inclin)))
+                     )
+            z = a * ((math.cos(e_anom_new) - e) *
+                     (math.sin(w) * math.sin(inclin)) +
+                     ((1-e**2)**0.5) * (math.sin(e_anom_new) * (math.cos(w) * math.sin(inclin)))
+                     )
+            print(str(x) + ", " + str(y) + ", " +  str(z))
 
 
 t1 = threading.Thread(target=incremenet)
