@@ -39,6 +39,7 @@ inclin = 0
 omega = 0
 w = 0
 
+# hi #
 
 # ---------------THRUST CODE---------------
 def on_press(key):
