@@ -81,31 +81,22 @@ def incremenet():
             if int(t_string.get()) != 0:
                 # Finding eccentricity anomaly using
                 # orbitalpy library: https://github.com/RazerM/orbital/blob/master/orbital/utilities.py#:~:text=def%20eccentric_anomaly_from_mean(e,return%20E
+                # Mean anomaly in degrees multiplied by pi/180 to convert into radians
                 mean_anomaly = 4.105 * (math.pi / 180.0)
+                # Eccentricity anomaly in radians divided by pi/180 to convert to degrees
                 eccentricity_anomaly = eccentric_anomaly_from_mean(e, mean_anomaly) / (math.pi / 180.0)
-                print("Eccentricity anomaly: "+str(eccentricity_anomaly))
+
+                # print("Eccentricity anomaly: "+str(eccentricity_anomaly))
 
                 # Cartesian coordinates
-                x = a * ((math.cos(eccentricity_anomaly) - e) *
-                         (math.cos(w) * math.cos(omega) - math.sin(w) * math.sin(omega) * math.cos(inclin)) +
-                         ((1-(e**2))**0.5) * (math.sin(eccentricity_anomaly) *
-                                              (-math.sin(w) * math.cos(omega) -
-                                               math.cos(w) * math.sin(omega) * math.cos(inclin)))
-                         )
-                y = a * ((math.cos(eccentricity_anomaly) - e) *
-                         (math.cos(w) * math.cos(omega) - math.sin(w) * math.sin(omega) * math.cos(inclin)) +
-                         ((1-e**2)**0.5) *
-                         (math.sin(eccentricity_anomaly) * (-math.sin(w) * math.cos(omega) - math.cos(w) * math.sin(omega) *
-                                                  math.cos(inclin)))
-                         )
-                z = a * ((math.cos(eccentricity_anomaly) - e) *
-                         (math.sin(w) * math.sin(inclin)) +
-                         ((1-e**2)**0.5) * (math.sin(eccentricity_anomaly) * (math.cos(w) * math.sin(inclin)))
-                         )
-                # print(str(x) + ", " + str(y) + ", " +  str(z))
+                x = a * ((math.cos(eccentricity_anomaly * (math.pi / 180.0)) - e) * (math.cos(w * (math.pi / 180.0)) * math.cos(omega * (math.pi / 180.0)) - math.sin(w * (math.pi / 180.0)) * math.sin(omega * (math.pi / 180.0)) * math.cos(inclin * (math.pi / 180.0))) + ((1-(e**2))**0.5) * (math.sin(eccentricity_anomaly) * (-math.sin(w * (math.pi / 180.0)) * math.cos(omega * (math.pi / 180.0)) - math.cos(w * (math.pi / 180.0)) * math.sin(omega * (math.pi / 180.0)) * math.cos(inclin * (math.pi / 180.0)))))
+                y = a * ((math.cos(eccentricity_anomaly) - e) * (math.cos(w * (math.pi / 180.0)) * math.cos(omega * (math.pi / 180.0)) - math.sin(w * (math.pi / 180.0)) * math.sin(omega * (math.pi / 180.0)) * math.cos(inclin * (math.pi / 180.0))) + ((1-e**2)**0.5) * (math.sin(eccentricity_anomaly) * (-math.sin(w * (math.pi / 180.0)) * math.cos(omega * (math.pi / 180.0)) - math.cos(w * (math.pi / 180.0)) * math.sin(omega * (math.pi / 180.0)) * math.cos(inclin * (math.pi / 180.0)))))
+                z = a * ((math.cos(eccentricity_anomaly) - e) * (math.sin(w * (math.pi / 180.0)) * math.sin(inclin * (math.pi / 180.0))) + ((1-e**2)**0.5) * (math.sin(eccentricity_anomaly) * (math.cos(w * (math.pi / 180.0)) * math.sin(inclin * (math.pi / 180.0)))))
+                print(str(x) + ", " + str(y) + ", " + str(z))
         except RuntimeError:
             # When the window is closed, the thread stops
             return
+
 
 t1 = threading.Thread(target=incremenet)
 t_string = StringVar(root, '0')
