@@ -62,9 +62,9 @@ listener.start()
 
 # ---------------MAP CODE---------------
 root = Tk()
-canvas = Canvas(root, width=window_width, height=window_width // 2)
-img = ImageTk.PhotoImage(Image.open(r"A:\Python Projects\ScienceProj2122Python\map.tiff")
-                         .resize((window_width, window_width // 2)))
+canvas = Canvas(root, width=window_width // 2, height=window_width // 4)
+img = ImageTk.PhotoImage(Image.open(r"map.tiff")
+                         .resize((window_width // 2, window_width // 4)))
 canvas.create_image(20, 20, anchor=NW, image=img)
 canvas.pack()
 
