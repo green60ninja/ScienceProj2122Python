@@ -90,10 +90,13 @@ def incremenet():
                 # print("Eccentricity anomaly: "+str(eccentricity_anomaly))
 
                 # Cartesian coordinates
-                x = a * ((math.cos(eccentricity_anomaly * (math.pi / 180.0)) - e) * (math.cos(w * (math.pi / 180.0)) * math.cos(omega * (math.pi / 180.0)) - math.sin(w * (math.pi / 180.0)) * math.sin(omega * (math.pi / 180.0)) * math.cos(inclin * (math.pi / 180.0))) + ((1-(e**2))**0.5) * (math.sin(eccentricity_anomaly) * (-math.sin(w * (math.pi / 180.0)) * math.cos(omega * (math.pi / 180.0)) - math.cos(w * (math.pi / 180.0)) * math.sin(omega * (math.pi / 180.0)) * math.cos(inclin * (math.pi / 180.0)))))
-                y = a * ((math.cos(eccentricity_anomaly) - e) * (math.cos(w * (math.pi / 180.0)) * math.cos(omega * (math.pi / 180.0)) - math.sin(w * (math.pi / 180.0)) * math.sin(omega * (math.pi / 180.0)) * math.cos(inclin * (math.pi / 180.0))) + ((1-e**2)**0.5) * (math.sin(eccentricity_anomaly) * (-math.sin(w * (math.pi / 180.0)) * math.cos(omega * (math.pi / 180.0)) - math.cos(w * (math.pi / 180.0)) * math.sin(omega * (math.pi / 180.0)) * math.cos(inclin * (math.pi / 180.0)))))
-                z = a * ((math.cos(eccentricity_anomaly) - e) * (math.sin(w * (math.pi / 180.0)) * math.sin(inclin * (math.pi / 180.0))) + ((1-e**2)**0.5) * (math.sin(eccentricity_anomaly) * (math.cos(w * (math.pi / 180.0)) * math.sin(inclin * (math.pi / 180.0)))))
+                x = a * ((math.cos(math.pi) - ))
+                y =
+                z =
                 print(str(x) + ", " + str(y) + ", " + str(z))
+
+                latitude = math.atan(z / (math.sqrt(x ** 2 + y ** 2)))
+                longitude = math.arctan(y / x) - 0 - 
         except RuntimeError:
             # When the window is closed, the thread stops
             return
