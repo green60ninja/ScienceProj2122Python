@@ -1,19 +1,22 @@
 import math
-from tkinter import *
-from tkinter import messagebox
-from PIL import Image, ImageTk
-from pynput import keyboard
 import threading
 import time
-from sympy import *  # See https://docs.sympy.org/latest/index.html for documentation
+from tkinter import *
+from tkinter import messagebox
+
+import poliastro.bodies
+from astropy.units.quantity import Quantity
 from orbital.utilities import eccentric_anomaly_from_mean
+from PIL import Image, ImageTk
+from poliastro.frames.enums import Planes
+from poliastro.twobody.orbit import Orbit
+from pynput import keyboard
+from sympy import *  # See https://docs.sympy.org/latest/index.html for documentation
+from sympy.utilities.lambdify import implemented_function
 
 
 # Orbital object class (i.e. planet, satellite, moon, etc.
 # Has some general info
-from sympy.utilities.lambdify import implemented_function
-
-
 class OrbitObj:
     # Instantiated with mass.
     def __init__(self, mass):
@@ -53,8 +56,7 @@ def on_press(key):
 def on_release(key):
     global thrust
     k = key
-    # print(k)
-    print(thrust)
+    # print(thrust)
 
 
 listener = keyboard.Listener(on_press=on_press, on_release=on_release)
@@ -75,28 +77,40 @@ def incremenet():
     while True:
         try:
             t += 1
+            if t >= 360:
+                t = 0
             time.sleep(1)
             t_string.set(str(t))
             root.update_idletasks()
 
             if int(t_string.get()) != 0:
-                # Finding eccentricity anomaly using
-                # orbitalpy library: https://github.com/RazerM/orbital/blob/master/orbital/utilities.py#:~:text=def%20eccentric_anomaly_from_mean(e,return%20E
-                # Mean anomaly in degrees multiplied by pi/180 to convert into radians
-                mean_anomaly = 4.105 * (math.pi / 180.0)
-                # Eccentricity anomaly in radians divided by pi/180 to convert to degrees
-                eccentricity_anomaly = eccentric_anomaly_from_mean(e, mean_anomaly) / (math.pi / 180.0)
-
-                # print("Eccentricity anomaly: "+str(eccentricity_anomaly))
-
                 # Cartesian coordinates
-                x = a * ((math.cos(math.pi) - ))
-                y =
-                z =
+                a_quant = Quantity(value=a, unit='km')
+                e_quant = Quantity(value=e)
+                inclin_quant = Quantity(value=inclin, unit='deg')
+                omega_quant = Quantity(value=omega, unit='deg')
+                w_quant = Quantity(value=w, unit='deg')
+                t_quant = Quantity(value=t, unit='deg')
+                
+                lro_orbit = Orbit.from_classical(
+                    attractor=poliastro.bodies.Moon,
+                    a=a_quant,
+                    ecc=e_quant,
+                    inc=inclin_quant,
+                    raan=omega_quant,
+                    argp=w_quant,
+                    nu=t_quant,
+                    plane=Planes.BODY_FIXED
+                    )
+
+                x = lro_orbit.r[0].to_value()  # TODO: FIX. This is a PLACEHOLDER
+                y = lro_orbit.r[1].to_value()  # TODO: FIX. This is a PLACEHOLDER
+                z = lro_orbit.r[2].to_value()  # TODO: FIX. This is a PLACEHOLDER
                 print(str(x) + ", " + str(y) + ", " + str(z))
 
+                # ECEF Coordinates
                 latitude = math.atan(z / (math.sqrt(x ** 2 + y ** 2)))
-                longitude = math.arctan(y / x) - 0 - 
+                longitude = math.atan(y / x) - 0 - 1  # TODO: FIX. This is a placeholder
         except RuntimeError:
             # When the window is closed, the thread stops
             return
