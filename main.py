@@ -13,6 +13,7 @@ from poliastro.twobody.orbit import Orbit
 from pynput import keyboard
 from sympy import *  # See https://docs.sympy.org/latest/index.html for documentation
 from sympy.utilities.lambdify import implemented_function
+from astropy.coordinates import SkyCoord
 
 
 # Orbital object class (i.e. planet, satellite, moon, etc.
@@ -103,14 +104,14 @@ def incremenet():
                     plane=Planes.BODY_FIXED
                     )
 
-                x = lro_orbit.r[0].to_value()  # TODO: FIX. This is a PLACEHOLDER
-                y = lro_orbit.r[1].to_value()  # TODO: FIX. This is a PLACEHOLDER
-                z = lro_orbit.r[2].to_value()  # TODO: FIX. This is a PLACEHOLDER
-                print(str(x) + ", " + str(y) + ", " + str(z))
+                x = lro_orbit.r[0]  # TODO: FIX. This is a PLACEHOLDER
+                y = lro_orbit.r[1]  # TODO: FIX. This is a PLACEHOLDER
+                z = lro_orbit.r[2]  # TODO: FIX. This is a PLACEHOLDER
+                # print(str(x.to_value()) + ", " + str(y.to_value()) + ", " + str(z.to_value()))
 
-                # ECEF Coordinates
-                latitude = math.atan(z / (math.sqrt(x ** 2 + y ** 2)))
-                longitude = math.atan(y / x) - 0 - 1  # TODO: FIX. This is a placeholder
+                # Latitude and Longitude Coordinates
+                lro_orbit_astro = SkyCoord(representation_type='cartesian', x=x, y=y, z=z)
+                print(lro_orbit_astro.to_string().split())
         except RuntimeError:
             # When the window is closed, the thread stops
             return
