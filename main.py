@@ -104,14 +104,16 @@ def incremenet():
                     plane=Planes.BODY_FIXED
                     )
 
-                x = lro_orbit.r[0]  # TODO: FIX. This is a PLACEHOLDER
-                y = lro_orbit.r[1]  # TODO: FIX. This is a PLACEHOLDER
-                z = lro_orbit.r[2]  # TODO: FIX. This is a PLACEHOLDER
+                x = lro_orbit.r[0]
+                y = lro_orbit.r[1]
+                z = lro_orbit.r[2]
                 # print(str(x.to_value()) + ", " + str(y.to_value()) + ", " + str(z.to_value()))
 
                 # Latitude and Longitude Coordinates
                 lro_orbit_astro = SkyCoord(representation_type='cartesian', x=x, y=y, z=z)
                 print(lro_orbit_astro.to_string().split())
+
+                # TODO: Projection onto map
         except RuntimeError:
             # When the window is closed, the thread stops
             return
