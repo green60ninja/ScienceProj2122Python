@@ -14,6 +14,7 @@ from pynput import keyboard
 from sympy import *  # See https://docs.sympy.org/latest/index.html for documentation
 from sympy.utilities.lambdify import implemented_function
 from astropy.coordinates import SkyCoord
+from astropy.wcs import WCS
 
 
 # Orbital object class (i.e. planet, satellite, moon, etc.
@@ -112,6 +113,11 @@ def incremenet():
                 # Latitude and Longitude Coordinates
                 lro_orbit_astro = SkyCoord(representation_type='cartesian', x=x, y=y, z=z)
                 print(lro_orbit_astro.to_string().split())
+
+                # Plotting onto map
+                canvas.create_oval(100, 100, 105, 105, outline="#000", fill="#000", width=2)
+                # The above command is to plot a point on a line with the top-left at (100, 100)
+
         except RuntimeError:
             # When the window is closed, the thread stops
             return
