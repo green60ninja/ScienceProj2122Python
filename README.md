@@ -5,6 +5,6 @@ Libraries used:
  - Tkinter
  - Pillow (PIL)
  - Pynput
- - Sympy
- - OrbitalPy
- - Poliastro (?)
+ - Poliastro
+ - Astropy
+ - 
