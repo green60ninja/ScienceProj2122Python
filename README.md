@@ -7,4 +7,3 @@ Libraries used:
  - Pynput
  - Poliastro
  - Astropy
- - 
