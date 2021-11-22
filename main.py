@@ -40,26 +40,6 @@ inclin = 0
 omega = 0
 w = 0
 
-# hi #
-
-# ---------------THRUST CODE---------------
-def on_press(key):
-    global thrust
-    if key == keyboard.Key.up or key == keyboard.KeyCode.from_char('w'):
-        thrust += amount_change
-    elif key == keyboard.Key.down or key == keyboard.KeyCode.from_char('s'):
-        thrust -= amount_change
-
-
-def on_release(key):
-    global thrust
-    k = key
-    # print(thrust)
-
-
-listener = keyboard.Listener(on_press=on_press, on_release=on_release)
-listener.start()
-
 # ---------------MAP CODE---------------
 root = Tk()
 canvas = Canvas(root, width=window_width // 2, height=window_width // 4)
@@ -137,11 +117,11 @@ def incremenet():
 
                 x = map_w/2
                 y = map_h/2
-                print("[x, y]"+str([x, y]))
+                # print("[x, y]"+str([x, y]))
                 canvas.create_oval(x, y, x, y, fill="#000", width=5)
         except RuntimeError:
             # When the window is closed, the thread stops
-            return
+            break
 
 
 t1 = threading.Thread(target=incremenet)
