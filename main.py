@@ -72,52 +72,77 @@ img = ImageTk.PhotoImage(Image.open(r"map.tiff")
 canvas.create_image(20, 20, anchor=NW, image=img)
 canvas.pack()
 
+# ---------------CALCULATIONS---------------
+# Input  - N/A
+# Output - Array of Cartesian coordinates
+def cartesian_from_elements():
+    a_quant = Quantity(value=a, unit='km')
+    e_quant = Quantity(value=e)
+    inclin_quant = Quantity(value=inclin, unit='deg')
+    omega_quant = Quantity(value=omega, unit='deg')
+    w_quant = Quantity(value=w, unit='deg')
+    t_quant = Quantity(value=t, unit='deg')
+                
+    lro_orbit = Orbit.from_classical(
+        attractor=poliastro.bodies.Moon,
+        a=a_quant,
+        ecc=e_quant,
+        inc=inclin_quant,
+        raan=omega_quant,
+        argp=w_quant,
+        nu=t_quant,
+        plane=Planes.BODY_FIXED
+        )
+
+    x = lro_orbit.r[0]
+    y = lro_orbit.r[1]
+    z = lro_orbit.r[2]
+    return [x, y, z]
+    # print(str(x.to_value()) + ", " + str(y.to_value()) + ", " + str(z.to_value()))
+
+# Input  - Cartesian coordinates
+# Output - Array of latitude and longitude
+def cart_to_spherical(x, y, z):
+    lro_orbit_astro = SkyCoord(representation_type='cartesian', x=x, y=y, z=z)
+    lat = float(lro_orbit_astro.to_string().split()[0])
+    long = float(lro_orbit_astro.to_string().split()[1])
+    print("[Lat, Long]: "+str([lat, long]))
+    return [lat, long]
 
 # ---------------UI CODE---------------
 def incremenet():
-    global t, a, e, inclin, omega, w
+    global t, a, e, inclin, omega, w, canvas
     while True:
         try:
             t += 1
             if t >= 360:
                 t = 0
-            time.sleep(1)
+            # time.sleep(1)
             t_string.set(str(t))
             root.update_idletasks()
 
             if int(t_string.get()) != 0:
                 # Cartesian coordinates
-                a_quant = Quantity(value=a, unit='km')
-                e_quant = Quantity(value=e)
-                inclin_quant = Quantity(value=inclin, unit='deg')
-                omega_quant = Quantity(value=omega, unit='deg')
-                w_quant = Quantity(value=w, unit='deg')
-                t_quant = Quantity(value=t, unit='deg')
-                
-                lro_orbit = Orbit.from_classical(
-                    attractor=poliastro.bodies.Moon,
-                    a=a_quant,
-                    ecc=e_quant,
-                    inc=inclin_quant,
-                    raan=omega_quant,
-                    argp=w_quant,
-                    nu=t_quant,
-                    plane=Planes.BODY_FIXED
-                    )
-
-                x = lro_orbit.r[0]
-                y = lro_orbit.r[1]
-                z = lro_orbit.r[2]
-                # print(str(x.to_value()) + ", " + str(y.to_value()) + ", " + str(z.to_value()))
+                result = cartesian_from_elements()
+                x = result[0]
+                y = result[1]
+                z = result[2]
 
                 # Latitude and Longitude Coordinates
-                lro_orbit_astro = SkyCoord(representation_type='cartesian', x=x, y=y, z=z)
-                print(lro_orbit_astro.to_string().split())
+                lat_long = cart_to_spherical(x, y, z)
+                lat = lat_long[0]
+                long = lat_long[1]
 
                 # Plotting onto map
-                canvas.create_oval(100, 100, 105, 105, outline="#000", fill="#000", width=2)
+                # canvas.create_oval(100, 100, 105, 105, outline="#000", fill="#000", width=1)
                 # The above command is to plot a point on a line with the top-left at (100, 100)
+                map_w = float(canvas["width"])
+                map_h = float(canvas["height"])
 
+                x = 1
+                y = 1
+                print("[x, y]"+str([x, y]))
+                canvas.create_oval(x, y, x, y, fill="#000", width=5)
         except RuntimeError:
             # When the window is closed, the thread stops
             return
