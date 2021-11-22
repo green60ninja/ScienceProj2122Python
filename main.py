@@ -6,15 +6,11 @@ from tkinter import messagebox
 
 import poliastro.bodies
 from astropy.units.quantity import Quantity
-from orbital.utilities import eccentric_anomaly_from_mean
 from PIL import Image, ImageTk
 from poliastro.frames.enums import Planes
 from poliastro.twobody.orbit import Orbit
 from pynput import keyboard
-from sympy import *  # See https://docs.sympy.org/latest/index.html for documentation
-from sympy.utilities.lambdify import implemented_function
 from astropy.coordinates import SkyCoord
-from astropy.wcs import WCS
 
 
 # Orbital object class (i.e. planet, satellite, moon, etc.
@@ -139,8 +135,8 @@ def incremenet():
                 map_w = float(canvas["width"])
                 map_h = float(canvas["height"])
 
-                x = 1
-                y = 1
+                x = map_w/2
+                y = map_h/2
                 print("[x, y]"+str([x, y]))
                 canvas.create_oval(x, y, x, y, fill="#000", width=5)
         except RuntimeError:
