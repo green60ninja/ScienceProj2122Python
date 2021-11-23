@@ -148,6 +148,10 @@ def incremenet():
                 lat_long = cart_to_spherical(x, y, z)
                 lat = lat_long[0]
                 long = lat_long[1]
+
+                lat_long_2 = cart_to_spherical(x2, y2, z2)
+                lat2 = lat_long_2[0]
+                long2 = lat_long_2[1]
                 with open('values.csv', 'a', newline='') as file:
                     fwriter = csv.writer(file)
                     fwriter.writerow([long, lat])
