@@ -1,3 +1,4 @@
+import csv
 import math
 import threading
 import time
@@ -82,13 +83,14 @@ def cart_to_spherical(x, y, z):
     lro_orbit_astro = SkyCoord(representation_type='cartesian', x=x, y=y, z=z)
     lat = float(lro_orbit_astro.to_string().split()[0])
     long = float(lro_orbit_astro.to_string().split()[1])
-    print("[Lat, Long]: "+str([lat, long]))
+    # print("[Lat, Long]: "+str([lat, long]))
+    print("("+str(long)+","+str(lat)+")")
     return [lat, long]
 
 # ---------------UI CODE---------------
 def incremenet():
     global t, a, e, inclin, omega, w, canvas
-    while True:
+    while t1.is_alive():
         try:
             t += 1
             if t >= 360:
@@ -96,33 +98,35 @@ def incremenet():
             # time.sleep(1)
             t_string.set(str(t))
             root.update_idletasks()
-
+            
             if int(t_string.get()) != 0:
                 # Cartesian coordinates
                 result = cartesian_from_elements()
                 x = result[0]
                 y = result[1]
                 z = result[2]
-
+                
                 # Latitude and Longitude Coordinates
                 lat_long = cart_to_spherical(x, y, z)
                 lat = lat_long[0]
                 long = lat_long[1]
-
+                with open('values.csv', 'a', newline='') as file:
+                    fwriter = csv.writer(file)
+                    fwriter.writerow([long, lat])
+                
                 # Plotting onto map
                 # canvas.create_oval(100, 100, 105, 105, outline="#000", fill="#000", width=1)
                 # The above command is to plot a point on a line with the top-left at (100, 100)
                 map_w = float(canvas["width"])
                 map_h = float(canvas["height"])
-
                 x = map_w/2
                 y = map_h/2
                 # print("[x, y]"+str([x, y]))
                 canvas.create_oval(x, y, x, y, fill="#000", width=5)
         except RuntimeError:
-            # When the window is closed, the thread stops
             break
-
+    return
+        
 
 t1 = threading.Thread(target=incremenet)
 t_string = StringVar(root, '0')
