@@ -5,6 +5,7 @@ import time
 from tkinter import *
 from tkinter import messagebox
 from astropy.coordinates.representation import SphericalRepresentation
+from matplotlib.pyplot import plot
 
 import poliastro.bodies
 from astropy.units.quantity import Quantity
@@ -100,6 +101,8 @@ def cart_to_spherical(x, y, z):
 
     lat = lat * (180 / math.pi)
     long = long * (180 / math.pi)
+
+    print("[Long, Lat]: "+str([long, lat]))
     return [lat, long]
 
 def compare(x1, y1, z1, x2, y2, z2):
@@ -117,6 +120,16 @@ def compare(x1, y1, z1, x2, y2, z2):
         is_collision = True
 
     return is_collision
+
+def plot_lat_long(lat, long, color):
+    # canvas.create_oval(100, 100, 105, 105, outline="#000", fill="#000", width=1)
+    # The above command is to plot a point on a line with the top-left at (100, 100)
+    map_w = float(canvas["width"])
+    map_h = float(canvas["height"])
+    x_p = ((map_w / 2)+20) + long  # +20 to account for padding
+    y_p = ((map_h / 2)+20) + lat  # +20 to account for padding
+    # print("[x_p, y_p]"+str([x_p, y_p]))
+    canvas.create_oval(x_p, y_p, x_p, y_p, outline=color, width=5)
 
 # ---------------UI CODE---------------
 def incremenet():
@@ -157,14 +170,10 @@ def incremenet():
                     fwriter.writerow([long, lat])
                 
                 # Plotting onto map
-                # canvas.create_oval(100, 100, 105, 105, outline="#000", fill="#000", width=1)
-                # The above command is to plot a point on a line with the top-left at (100, 100)
-                map_w = float(canvas["width"])
-                map_h = float(canvas["height"])
-                x_p = (map_w / 2)+20  # +20 to account for padding
-                y_p = (map_h / 2)+20  # +20 to account for padding
-                # print("[x_p, y_p]"+str([x_p, y_p]))
-                canvas.create_oval(x_p, y_p, x_p, y_p, fill="#000", width=5)
+                plot1_color = "yellow" if collide else "red"    # Color changes if collision (Input)
+                plot2_color = "yellow" if collide else "blue"   # Color changes if collision (LRO)
+                plot_lat_long(lat, long, plot1_color)
+                plot_lat_long(lat2, long2, plot2_color)
         except RuntimeError:
             break
     return
