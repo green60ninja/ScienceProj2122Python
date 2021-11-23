@@ -78,7 +78,7 @@ def cartesian_from_elements(a, e, inclin, omega, w, t):
         plane=Planes.EARTH_EQUATOR
         )
 
-    plot_lro_orbit()
+    # plot_lro_orbit()
 
     x = lro_orbit.r[0] / u.km
     y = lro_orbit.r[1] / u.km
@@ -140,8 +140,6 @@ def plot_lat_long(lat, long, color):
 # ---------------UI CODE---------------
 def incremenet():
     global t, a, e, inclin, omega, w, canvas
-    cartesian_from_elements(a, e, inclin, omega, w, t)
-    time.sleep(100)
     while t1.is_alive():
         try:
             t += 0.1
@@ -158,7 +156,7 @@ def incremenet():
                 y = float(result[1])
                 z = float(result[2])
 
-                result2 = cartesian_from_elements(a=2011.343, e=0.635485, inclin=90.016, omega=88.74, w=336.655, t=t)
+                result2 = cartesian_from_elements(a=1795.224, e=0.019296, inclin=85.780, omega=128.208, w=246.531, t=t)
                 x2 = float(result2[0])
                 y2 = float(result2[1])
                 z2 = float(result2[2])
@@ -175,7 +173,7 @@ def incremenet():
                 long2 = lat_long_2[1]
                 with open('values.csv', 'a', newline='') as file:
                     fwriter = csv.writer(file)
-                    fwriter.writerow([long, lat])
+                    fwriter.writerow([long2, lat2])
                 
                 # Plotting onto map
                 plot1_color = "yellow" if collide else "red"    # Color changes if collision (Input)
@@ -189,7 +187,6 @@ def incremenet():
 
 t1 = threading.Thread(target=incremenet)
 t_string = StringVar(root, '0')
-
 
 label = Label(root, text="Keplerian Elements:")
 label.pack()
@@ -255,3 +252,4 @@ button = Button(root, text="Submit", command=submit)
 button.pack()
 
 root.mainloop()
+plot_lro_orbit()
