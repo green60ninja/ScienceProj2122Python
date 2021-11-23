@@ -4,17 +4,21 @@ import threading
 import time
 from tkinter import *
 from tkinter import messagebox
-from astropy.coordinates.representation import SphericalRepresentation
+from astropy.coordinates.representation import CartesianRepresentation, SphericalRepresentation
 from matplotlib.pyplot import plot
 
 import poliastro.bodies
 from astropy.units.quantity import Quantity
 from PIL import Image, ImageTk
 from poliastro.frames.enums import Planes
+from poliastro.plotting.core import OrbitPlotter3D
 from poliastro.twobody.orbit import Orbit
 from pynput import keyboard
 from astropy.coordinates import SkyCoord
 import astropy.units as u
+from poliastro.plotting import OrbitPlotter2D
+
+from plot_test import plot_lro_orbit
 
 
 # Orbital object class (i.e. planet, satellite, moon, etc.
@@ -43,7 +47,6 @@ e = 0
 inclin = 0
 omega = 0
 w = 0
-r = 1756  # The height of orbit + altitude of LRO
 
 # ---------------MAP CODE---------------
 root = Tk()
@@ -72,8 +75,10 @@ def cartesian_from_elements(a, e, inclin, omega, w, t):
         raan=omega_quant,
         argp=w_quant,
         nu=t_quant,
-        plane=Planes.BODY_FIXED
+        plane=Planes.EARTH_EQUATOR
         )
+
+    plot_lro_orbit()
 
     x = lro_orbit.r[0] / u.km
     y = lro_orbit.r[1] / u.km
@@ -95,7 +100,8 @@ def cart_to_spherical(x, y, z):
     return [lat, long]
 """
 def cart_to_spherical(x, y, z):
-    global r
+    r = math.sqrt(x*x + y*y + z*z)
+    
     lat = math.asin(z / r)
     long = math.asin(y / (r * math.cos(lat)))
 
@@ -134,16 +140,18 @@ def plot_lat_long(lat, long, color):
 # ---------------UI CODE---------------
 def incremenet():
     global t, a, e, inclin, omega, w, canvas
+    cartesian_from_elements(a, e, inclin, omega, w, t)
+    time.sleep(100)
     while t1.is_alive():
         try:
-            t += 1
+            t += 0.1
             if t >= 360:
                 break
             # time.sleep(1)
             t_string.set(str(t))
             root.update_idletasks()
             
-            if int(t_string.get()) != 0:
+            if float(t_string.get()) != 0:
                 # Cartesian coordinates
                 result = cartesian_from_elements(a, e, inclin, omega, w, t)
                 x = float(result[0])
