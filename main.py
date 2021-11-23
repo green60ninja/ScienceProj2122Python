@@ -55,7 +55,7 @@ canvas.pack()
 # ---------------CALCULATIONS---------------
 # Input  - N/A
 # Output - Array of Cartesian coordinates
-def cartesian_from_elements():
+def cartesian_from_elements(a, e, inclin, omega, w, t):
     a_quant = Quantity(value=a, unit='km')  # Semimajor axis
     e_quant = Quantity(value=e)  # Eccentricity
     inclin_quant = Quantity(value=inclin, unit='deg')  # Inclination
@@ -74,9 +74,9 @@ def cartesian_from_elements():
         plane=Planes.BODY_FIXED
         )
 
-    x = lro_orbit.r[0]
-    y = lro_orbit.r[1]
-    z = lro_orbit.r[2]
+    x = lro_orbit.r[0] / u.km
+    y = lro_orbit.r[1] / u.km
+    z = lro_orbit.r[2] / u.km
     return [x, y, z]
     # print(str(x.to_value()) + ", " + str(y.to_value()) + ", " + str(z.to_value()))
 
@@ -102,6 +102,22 @@ def cart_to_spherical(x, y, z):
     long = long * (180 / math.pi)
     return [lat, long]
 
+def compare(x1, y1, z1, x2, y2, z2):
+    is_collision = False
+    
+    rounded_x1 = round(x1, -2)
+    rounded_y1 = round(y1, -2)
+    rounded_z1 = round(z1, -2)
+    
+    rounded_x2 = round(x2, -2)
+    rounded_y2 = round(y2, -2)
+    rounded_z2 = round(z2, -2)
+
+    if (rounded_x1, rounded_y1, rounded_z1) == (rounded_x2, rounded_y2, rounded_z2):
+        is_collision = True
+
+    return is_collision
+
 # ---------------UI CODE---------------
 def incremenet():
     global t, a, e, inclin, omega, w, canvas
@@ -116,10 +132,17 @@ def incremenet():
             
             if int(t_string.get()) != 0:
                 # Cartesian coordinates
-                result = cartesian_from_elements()
-                x = result[0] / u.km
-                y = result[1] / u.km
-                z = result[2] / u.km
+                result = cartesian_from_elements(a, e, inclin, omega, w, t)
+                x = result[0]
+                y = result[1]
+                z = result[2]
+
+                result2 = cartesian_from_elements(a=2011.343, e=0.635485, inclin=90.016, omega=88.74, w=336.655, t=t)
+                x2 = result2[0]
+                y2 = result2[1]
+                z2 = result2[2]
+
+                collide = compare(x, y, z, x2, y2, z2)  # To check if two orbits collide
                 
                 # Latitude and Longitude Coordinates
                 lat_long = cart_to_spherical(x, y, z)
@@ -134,10 +157,10 @@ def incremenet():
                 # The above command is to plot a point on a line with the top-left at (100, 100)
                 map_w = float(canvas["width"])
                 map_h = float(canvas["height"])
-                x = map_w/2
-                y = map_h/2
-                # print("[x, y]"+str([x, y]))
-                canvas.create_oval(x, y, x, y, fill="#000", width=5)
+                x_p = map_w/2
+                y_p = map_h/2
+                # print("[x_p, y_p]"+str([x_p, y_p]))
+                canvas.create_oval(x_p, y_p, x_p, y_p, fill="#000", width=5)
         except RuntimeError:
             break
     return
