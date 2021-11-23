@@ -133,14 +133,14 @@ def incremenet():
             if int(t_string.get()) != 0:
                 # Cartesian coordinates
                 result = cartesian_from_elements(a, e, inclin, omega, w, t)
-                x = result[0]
-                y = result[1]
-                z = result[2]
+                x = float(result[0])
+                y = float(result[1])
+                z = float(result[2])
 
                 result2 = cartesian_from_elements(a=2011.343, e=0.635485, inclin=90.016, omega=88.74, w=336.655, t=t)
-                x2 = result2[0]
-                y2 = result2[1]
-                z2 = result2[2]
+                x2 = float(result2[0])
+                y2 = float(result2[1])
+                z2 = float(result2[2])
 
                 collide = compare(x, y, z, x2, y2, z2)  # To check if two orbits collide
                 
@@ -161,8 +161,8 @@ def incremenet():
                 # The above command is to plot a point on a line with the top-left at (100, 100)
                 map_w = float(canvas["width"])
                 map_h = float(canvas["height"])
-                x_p = map_w/2
-                y_p = map_h/2
+                x_p = (map_w / 2)+20  # +20 to account for padding
+                y_p = (map_h / 2)+20  # +20 to account for padding
                 # print("[x_p, y_p]"+str([x_p, y_p]))
                 canvas.create_oval(x_p, y_p, x_p, y_p, fill="#000", width=5)
         except RuntimeError:
