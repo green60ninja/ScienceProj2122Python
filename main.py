@@ -4,6 +4,7 @@ import threading
 import time
 from tkinter import *
 from tkinter import messagebox
+from astropy.coordinates.representation import SphericalRepresentation
 
 import poliastro.bodies
 from astropy.units.quantity import Quantity
@@ -12,6 +13,7 @@ from poliastro.frames.enums import Planes
 from poliastro.twobody.orbit import Orbit
 from pynput import keyboard
 from astropy.coordinates import SkyCoord
+import astropy.units as u
 
 
 # Orbital object class (i.e. planet, satellite, moon, etc.
@@ -40,6 +42,7 @@ e = 0
 inclin = 0
 omega = 0
 w = 0
+r = 1756  # The height of orbit + altitude of LRO
 
 # ---------------MAP CODE---------------
 root = Tk()
@@ -53,12 +56,12 @@ canvas.pack()
 # Input  - N/A
 # Output - Array of Cartesian coordinates
 def cartesian_from_elements():
-    a_quant = Quantity(value=a, unit='km')
-    e_quant = Quantity(value=e)
-    inclin_quant = Quantity(value=inclin, unit='deg')
-    omega_quant = Quantity(value=omega, unit='deg')
-    w_quant = Quantity(value=w, unit='deg')
-    t_quant = Quantity(value=t, unit='deg')
+    a_quant = Quantity(value=a, unit='km')  # Semimajor axis
+    e_quant = Quantity(value=e)  # Eccentricity
+    inclin_quant = Quantity(value=inclin, unit='deg')  # Inclination
+    omega_quant = Quantity(value=omega, unit='deg')  # Longitude of Ascending Node
+    w_quant = Quantity(value=w, unit='deg')  # Argument of Perigee
+    t_quant = Quantity(value=t, unit='deg')  # True anomaly
                 
     lro_orbit = Orbit.from_classical(
         attractor=poliastro.bodies.Moon,
@@ -79,12 +82,24 @@ def cartesian_from_elements():
 
 # Input  - Cartesian coordinates
 # Output - Array of latitude and longitude
+"""
+# OLD FUNCTION - DO NOT TOUCH (whoops)
 def cart_to_spherical(x, y, z):
     lro_orbit_astro = SkyCoord(representation_type='cartesian', x=x, y=y, z=z)
-    lat = float(lro_orbit_astro.to_string().split()[0])
-    long = float(lro_orbit_astro.to_string().split()[1])
+    lat = float(lro_orbit_astro.represent_as(SphericalRepresentation).lat / u.rad)
+    long = float(lro_orbit_astro.represent_as(SphericalRepresentation).lon / u.rad)
+    # altitude = float(lro_orbit_astro.represent_as(SphericalRepresentation).distance / u.km)  # TODO: Add in calculation accounting for distance from surface to point
     # print("[Lat, Long]: "+str([lat, long]))
-    print("("+str(long)+","+str(lat)+")")
+    # print("("+str(long)+","+str(lat)+")")
+    return [lat, long]
+"""
+def cart_to_spherical(x, y, z):
+    global r
+    lat = math.asin(z / r)
+    long = math.asin(y / (r * math.cos(lat)))
+
+    lat = lat * (180 / math.pi)
+    long = long * (180 / math.pi)
     return [lat, long]
 
 # ---------------UI CODE---------------
@@ -94,7 +109,7 @@ def incremenet():
         try:
             t += 1
             if t >= 360:
-                t = 0
+                break
             # time.sleep(1)
             t_string.set(str(t))
             root.update_idletasks()
@@ -102,9 +117,9 @@ def incremenet():
             if int(t_string.get()) != 0:
                 # Cartesian coordinates
                 result = cartesian_from_elements()
-                x = result[0]
-                y = result[1]
-                z = result[2]
+                x = result[0] / u.km
+                y = result[1] / u.km
+                z = result[2] / u.km
                 
                 # Latitude and Longitude Coordinates
                 lat_long = cart_to_spherical(x, y, z)
