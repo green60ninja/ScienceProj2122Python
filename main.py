@@ -74,8 +74,6 @@ def cartesian_from_elements(a, e, inclin, omega, w, t):
         plane=Planes.EARTH_EQUATOR
         )
 
-    # plot_lro_orbit()
-
     x = lro_orbit.r[0] / u.km
     y = lro_orbit.r[1] / u.km
     z = lro_orbit.r[2] / u.km
@@ -98,9 +96,6 @@ def cart_to_spherical(x, y, z):
 def cart_to_spherical(x, y, z):
     r = math.sqrt(x*x + y*y + z*z)
     
-    # lat = math.asin(z / r)
-    # long = math.asin(y / (r * math.cos(lat)))
-    # Using https://en.wikipedia.org/wiki/Spherical_coordinate_system#Cartesian_coordinates
     lat = math.acos(z / r)
     if x > 0:
         long = math.atan(y / x)
@@ -109,12 +104,14 @@ def cart_to_spherical(x, y, z):
     else:
         long = math.pi / 2 
 
-    lat = lat * (180 / math.pi)
-    long = long * (180 / math.pi)
+    lat = lat * (180 / math.pi)   # Converting to degrees from radians
+    long = long * (180 / math.pi) # Converting to degrees from radians
 
     print("[Long, Lat]: "+str([long, lat]))
     return [lat, long]
 
+# Input  - (x1, y1, z1) and (x2, y2, z2) to compare
+# Output - Orbits have collided at true anomaly 't' (bool)
 def compare(x1, y1, z1, x2, y2, z2):
     is_collision = False
     
@@ -131,6 +128,8 @@ def compare(x1, y1, z1, x2, y2, z2):
 
     return is_collision
 
+# Input  - (lat, long), color of orbit (identifier)
+# Output - N/A
 def plot_lat_long(lat, long, color):
     # canvas.create_oval(100, 100, 105, 105, outline="#000", fill="#000", width=1)
     # The above command is to plot a point on a line with the top-left at (100, 100)
@@ -188,7 +187,7 @@ def incremenet():
             break
     return
         
-
+# Declaring threads for the calculations & orbit plot
 t1 = threading.Thread(target=incremenet)
 t_string = StringVar(root, '0')
 t2 = threading.Thread(target=plot_lro_orbit)  # Poliastro plot thread
