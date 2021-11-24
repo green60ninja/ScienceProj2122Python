@@ -8,7 +8,8 @@ import warnings
 
 from . import numeric as _nx
 from . import overrides
-from .multiarray import array, asanyarray, normalize_axis_index
+from ._asarray import array, asanyarray
+from .multiarray import normalize_axis_index
 from . import fromnumeric as _from_nx
 
 
@@ -257,20 +258,20 @@ def vstack(tup):
     Examples
     --------
     >>> a = np.array([1, 2, 3])
-    >>> b = np.array([4, 5, 6])
+    >>> b = np.array([2, 3, 4])
     >>> np.vstack((a,b))
     array([[1, 2, 3],
-           [4, 5, 6]])
+           [2, 3, 4]])
 
     >>> a = np.array([[1], [2], [3]])
-    >>> b = np.array([[4], [5], [6]])
+    >>> b = np.array([[2], [3], [4]])
     >>> np.vstack((a,b))
     array([[1],
            [2],
            [3],
-           [4],
-           [5],
-           [6]])
+           [2],
+           [3],
+           [4]])
 
     """
     if not overrides.ARRAY_FUNCTION_ENABLED:
@@ -320,15 +321,15 @@ def hstack(tup):
     Examples
     --------
     >>> a = np.array((1,2,3))
-    >>> b = np.array((4,5,6))
+    >>> b = np.array((2,3,4))
     >>> np.hstack((a,b))
-    array([1, 2, 3, 4, 5, 6])
+    array([1, 2, 3, 2, 3, 4])
     >>> a = np.array([[1],[2],[3]])
-    >>> b = np.array([[4],[5],[6]])
+    >>> b = np.array([[2],[3],[4]])
     >>> np.hstack((a,b))
-    array([[1, 4],
-           [2, 5],
-           [3, 6]])
+    array([[1, 2],
+           [2, 3],
+           [3, 4]])
 
     """
     if not overrides.ARRAY_FUNCTION_ENABLED:
@@ -402,15 +403,15 @@ def stack(arrays, axis=0, out=None):
     (3, 4, 10)
 
     >>> a = np.array([1, 2, 3])
-    >>> b = np.array([4, 5, 6])
+    >>> b = np.array([2, 3, 4])
     >>> np.stack((a, b))
     array([[1, 2, 3],
-           [4, 5, 6]])
+           [2, 3, 4]])
 
     >>> np.stack((a, b), axis=-1)
-    array([[1, 4],
-           [2, 5],
-           [3, 6]])
+    array([[1, 2],
+           [2, 3],
+           [3, 4]])
 
     """
     if not overrides.ARRAY_FUNCTION_ENABLED:
@@ -606,7 +607,7 @@ def _block_info_recursion(arrays, max_depth, result_ndim, depth=0):
         The arrays to check
     max_depth : list of int
         The number of nested lists
-    result_ndim : int
+    result_ndim: int
         The number of dimensions in thefinal array.
 
     Returns
@@ -785,9 +786,9 @@ def block(arrays):
     array([1, 2, 3])
 
     >>> a = np.array([1, 2, 3])
-    >>> b = np.array([4, 5, 6])
+    >>> b = np.array([2, 3, 4])
     >>> np.block([a, b, 10])             # hstack([a, b, 10])
-    array([ 1,  2,  3,  4,  5,  6, 10])
+    array([ 1,  2,  3,  2,  3,  4, 10])
 
     >>> A = np.ones((2, 2), int)
     >>> B = 2 * A
@@ -798,10 +799,10 @@ def block(arrays):
     With a list of depth 2, `block` can be used in place of `vstack`:
 
     >>> a = np.array([1, 2, 3])
-    >>> b = np.array([4, 5, 6])
+    >>> b = np.array([2, 3, 4])
     >>> np.block([[a], [b]])             # vstack([a, b])
     array([[1, 2, 3],
-           [4, 5, 6]])
+           [2, 3, 4]])
 
     >>> A = np.ones((2, 2), int)
     >>> B = 2 * A

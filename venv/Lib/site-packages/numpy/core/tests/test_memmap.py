@@ -1,9 +1,10 @@
 import sys
 import os
+import shutil
 import mmap
 import pytest
 from pathlib import Path
-from tempfile import NamedTemporaryFile, TemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryFile, mktemp, mkdtemp
 
 from numpy import (
     memmap, sum, average, product, ndarray, isscalar, add, subtract, multiply)
@@ -17,6 +18,7 @@ from numpy.testing import (
 class TestMemmap:
     def setup(self):
         self.tmpfp = NamedTemporaryFile(prefix='mmap')
+        self.tempdir = mkdtemp()
         self.shape = (3, 4)
         self.dtype = 'float32'
         self.data = arange(12, dtype=self.dtype)
@@ -28,6 +30,7 @@ class TestMemmap:
         if IS_PYPY:
             break_cycles()
             break_cycles()
+        shutil.rmtree(self.tempdir)
 
     def test_roundtrip(self):
         # Write data to file
@@ -43,8 +46,8 @@ class TestMemmap:
         assert_array_equal(self.data, newfp)
         assert_equal(newfp.flags.writeable, False)
 
-    def test_open_with_filename(self, tmp_path):
-        tmpname = tmp_path / 'mmap'
+    def test_open_with_filename(self):
+        tmpname = mktemp('', 'mmap', dir=self.tempdir)
         fp = memmap(tmpname, dtype=self.dtype, mode='w+',
                        shape=self.shape)
         fp[:] = self.data[:]
@@ -64,11 +67,11 @@ class TestMemmap:
         assert_equal(mode, fp.mode)
         del fp
 
-    def test_filename(self, tmp_path):
-        tmpname = tmp_path / "mmap"
+    def test_filename(self):
+        tmpname = mktemp('', 'mmap', dir=self.tempdir)
         fp = memmap(tmpname, dtype=self.dtype, mode='w+',
                        shape=self.shape)
-        abspath = Path(os.path.abspath(tmpname))
+        abspath = os.path.abspath(tmpname)
         fp[:] = self.data[:]
         assert_equal(abspath, fp.filename)
         b = fp[:1]
@@ -76,8 +79,8 @@ class TestMemmap:
         del b
         del fp
 
-    def test_path(self, tmp_path):
-        tmpname = tmp_path / "mmap"
+    def test_path(self):
+        tmpname = mktemp('', 'mmap', dir=self.tempdir)
         fp = memmap(Path(tmpname), dtype=self.dtype, mode='w+',
                        shape=self.shape)
         # os.path.realpath does not resolve symlinks on Windows
