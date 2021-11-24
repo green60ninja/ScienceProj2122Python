@@ -4,19 +4,15 @@ import threading
 import time
 from tkinter import *
 from tkinter import messagebox
-from astropy.coordinates.representation import CartesianRepresentation, SphericalRepresentation
-from matplotlib.pyplot import plot
 
+import astropy.units as u
 import poliastro.bodies
 from astropy.units.quantity import Quantity
+from matplotlib.pyplot import plot
 from PIL import Image, ImageTk
 from poliastro.frames.enums import Planes
-from poliastro.plotting.core import OrbitPlotter3D
 from poliastro.twobody.orbit import Orbit
 from pynput import keyboard
-from astropy.coordinates import SkyCoord
-import astropy.units as u
-from poliastro.plotting import OrbitPlotter2D
 
 from plot_test import plot_lro_orbit
 
@@ -102,8 +98,16 @@ def cart_to_spherical(x, y, z):
 def cart_to_spherical(x, y, z):
     r = math.sqrt(x*x + y*y + z*z)
     
-    lat = math.asin(z / r)
-    long = math.asin(y / (r * math.cos(lat)))
+    # lat = math.asin(z / r)
+    # long = math.asin(y / (r * math.cos(lat)))
+    # Using https://en.wikipedia.org/wiki/Spherical_coordinate_system#Cartesian_coordinates
+    lat = math.acos(z / r)
+    if x > 0:
+        long = math.atan(y / x)
+    elif x < 0:
+        long = math.atan(y / x) + math.pi
+    else:
+        long = math.pi / 2 
 
     lat = lat * (180 / math.pi)
     long = long * (180 / math.pi)
@@ -187,6 +191,7 @@ def incremenet():
 
 t1 = threading.Thread(target=incremenet)
 t_string = StringVar(root, '0')
+t2 = threading.Thread(target=plot_lro_orbit)  # Poliastro plot thread
 
 label = Label(root, text="Keplerian Elements:")
 label.pack()
@@ -238,6 +243,7 @@ def submit():
     l4 = Label(frame, text="Argument of perigee: "+str(w)).pack()
 
     t1.start()
+    t2.start()
     l5 = Label(frame, textvariable=t_string).pack()
 
     semimajor_entry.pack_forget()
@@ -252,4 +258,3 @@ button = Button(root, text="Submit", command=submit)
 button.pack()
 
 root.mainloop()
-plot_lro_orbit()
