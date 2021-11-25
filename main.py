@@ -135,8 +135,9 @@ def plot_lat_long(lat, long, color):
     # The above command is to plot a point on a line with the top-left at (100, 100)
     map_w = float(canvas["width"])
     map_h = float(canvas["height"])
-    x_p = (map_w / 2) + long
-    y_p = (map_h / 2) + lat
+    x_p = ((map_w / 2) - 20) + long
+    y_p = ((map_h / 2) - 20) + lat
+
     # print("[x_p, y_p]"+str([x_p, y_p]))
     canvas.create_oval(x_p, y_p, x_p, y_p, outline=color, width=5)
 
