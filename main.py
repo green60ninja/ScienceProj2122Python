@@ -119,8 +119,8 @@ def incremenet():
                 # The above command is to plot a point on a line with the top-left at (100, 100)
                 map_w = float(canvas["width"])
                 map_h = float(canvas["height"])
-                x = map_w/2
-                y = map_h/2
+                x = map_w/2 + long
+                y = map_h/2 + lat
                 # print("[x, y]"+str([x, y]))
                 canvas.create_oval(x, y, x, y, fill="#000", width=5)
         except RuntimeError:
