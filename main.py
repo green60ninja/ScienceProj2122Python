@@ -143,8 +143,8 @@ def plot_lat_long(lat, long, color):
     # Finding the pixel coordinates on the map
     map_w = float(canvas["width"])
     map_h = float(canvas["height"])
-    x_p = ((map_w / 2) - 20) + long
-    y_p = ((map_h / 2) - 20) + lat
+    x_p = (((map_w / 2)) + long * (map_w / map_h)) - 170
+    y_p = (((map_h / 2)) + lat) - 50
 
     # Plotting the point
     canvas.create_oval(x_p, y_p, x_p, y_p, outline=color, width=5)
