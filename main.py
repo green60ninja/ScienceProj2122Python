@@ -53,16 +53,18 @@ canvas.create_image(20, 20, anchor=NW, image=img)
 canvas.pack()
 
 # ---------------CALCULATIONS---------------
+# Function to convert the Classical Keplerian elements into cartesian coordinates
 # Input  - N/A
 # Output - Array of Cartesian coordinates
 def cartesian_from_elements(a, e, inclin, omega, w, t):
-    a_quant = Quantity(value=a, unit='km')  # Semimajor axis
+    a_quant = Quantity(value=a, unit='km')  # Semimajor axis (kilometers)
     e_quant = Quantity(value=e)  # Eccentricity
-    inclin_quant = Quantity(value=inclin, unit='deg')  # Inclination
-    omega_quant = Quantity(value=omega, unit='deg')  # Longitude of Ascending Node
-    w_quant = Quantity(value=w, unit='deg')  # Argument of Perigee
-    t_quant = Quantity(value=t, unit='deg')  # True anomaly
-                
+    inclin_quant = Quantity(value=inclin, unit='deg')  # Inclination (degrees)
+    omega_quant = Quantity(value=omega, unit='deg')  # Longitude of Ascending Node (degrees)
+    w_quant = Quantity(value=w, unit='deg')  # Argument of Perigee (degrees)
+    t_quant = Quantity(value=t, unit='deg')  # True anomaly (degrees)
+    
+    # Creating an Orbit object
     lro_orbit = Orbit.from_classical(
         attractor=poliastro.bodies.Moon,
         a=a_quant,
@@ -74,14 +76,12 @@ def cartesian_from_elements(a, e, inclin, omega, w, t):
         plane=Planes.EARTH_EQUATOR
         )
 
+    # Taking individual x, y, and z values from position vector 'r'
     x = lro_orbit.r[0] / u.km
     y = lro_orbit.r[1] / u.km
     z = lro_orbit.r[2] / u.km
     return [x, y, z]
-    # print(str(x.to_value()) + ", " + str(y.to_value()) + ", " + str(z.to_value()))
 
-# Input  - Cartesian coordinates
-# Output - Array of latitude and longitude
 """
 # OLD FUNCTION - DO NOT TOUCH (whoops)
 def cart_to_spherical(x, y, z):
@@ -93,10 +93,15 @@ def cart_to_spherical(x, y, z):
     # print("("+str(long)+","+str(lat)+")")
     return [lat, long]
 """
+# Function to convert from Cartesian coordinates (x, y, z) to geographic coordinates (long, lat)
+# Input  - Cartesian coordinates
+# Output - Array of latitude and longitude
 def cart_to_spherical(x, y, z):
-    r = math.sqrt(x*x + y*y + z*z)
+    r = math.sqrt(x*x + y*y + z*z) # Getting the magnitude of the position vector
     
-    lat = math.acos(z / r)
+    lat = math.acos(z / r) # Inverse cosine of the z-component divided by the magnitude
+    # Piecewise function where the tangent of the longitude is equal to the y-component 
+    # divded by the x-component
     if x > 0:
         long = math.atan(y / x)
     elif x < 0:
@@ -104,17 +109,19 @@ def cart_to_spherical(x, y, z):
     else:
         long = math.pi / 2 
 
-    lat = lat * (180 / math.pi)   # Converting to degrees from radians
-    long = long * (180 / math.pi) # Converting to degrees from radians
+    lat = lat * (180 / math.pi)   # Converting to decimal degrees from radians
+    long = long * (180 / math.pi) # Converting to decimal degrees from radians
 
     print("[Long, Lat]: "+str([long, lat]))
     return [lat, long]
 
+# Function to compare two orbits' Cartesian coordinates to find a collision
 # Input  - (x1, y1, z1) and (x2, y2, z2) to compare
 # Output - Orbits have collided at true anomaly 't' (bool)
 def compare(x1, y1, z1, x2, y2, z2):
-    is_collision = False
+    is_collision = False # Automatically assumes no collision
     
+    # Rounding values to the nearest hundred to allow for more accurate collision detection
     rounded_x1 = round(x1, -2)
     rounded_y1 = round(y1, -2)
     rounded_z1 = round(z1, -2)
@@ -123,22 +130,23 @@ def compare(x1, y1, z1, x2, y2, z2):
     rounded_y2 = round(y2, -2)
     rounded_z2 = round(z2, -2)
 
+    # Comparing rounded coordinates
     if (rounded_x1, rounded_y1, rounded_z1) == (rounded_x2, rounded_y2, rounded_z2):
         is_collision = True
 
     return is_collision
 
+# Function to plot the longitude and latitude of an orbit's groundtrack on a map
 # Input  - (lat, long), color of orbit (identifier)
 # Output - N/A
 def plot_lat_long(lat, long, color):
-    # canvas.create_oval(100, 100, 105, 105, outline="#000", fill="#000", width=1)
-    # The above command is to plot a point on a line with the top-left at (100, 100)
+    # Finding the pixel coordinates on the map
     map_w = float(canvas["width"])
     map_h = float(canvas["height"])
     x_p = ((map_w / 2) - 20) + long
     y_p = ((map_h / 2) - 20) + lat
 
-    # print("[x_p, y_p]"+str([x_p, y_p]))
+    # Plotting the point
     canvas.create_oval(x_p, y_p, x_p, y_p, outline=color, width=5)
 
 # ---------------UI CODE---------------
