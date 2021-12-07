@@ -26,6 +26,3 @@ Inclination: 45
 Right ascension of ascending node: 0
 
 Argument of perigee: 0
-
-## Citations
-https://www.mybib.com/j/EagerSincereBee
