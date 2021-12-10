@@ -12,37 +12,18 @@ from matplotlib.pyplot import plot
 from PIL import Image, ImageTk
 from poliastro.frames.enums import Planes
 from poliastro.twobody.orbit import Orbit
-from pynput import keyboard
 
 from plot_test import plot_lro_orbit
 
 
-# Orbital object class (i.e. planet, satellite, moon, etc.
-# Has some general info
-class OrbitObj:
-    # Instantiated with mass.
-    def __init__(self, mass):
-        self.mass = mass
-
-
-G = 6.67430 * pow(10, -11)  # Newtonian constant of gravitation
-
-t = 0  # TIME (increments every second)
-
-# Declaring the objects for the moon and the satellite in orbit.
-moon = OrbitObj(mass=7.34767309 * pow(10, 22))
-sat = OrbitObj(mass=1916)  # Mass: (National Aeronautics and Space Administration, 2009)
-
-mu = G * moon.mass
-thrust = 44037.39       # Thrust variable
-amount_change = 10      # How much thrust changes for each button press
 window_width = 1500     # For rendering the canvas & map.
 
-a = 0
-e = 0
-inclin = 0
-omega = 0
-w = 0
+a = 0  # semimajor axis
+e = 0  # eccentricity
+inclin = 0  # inclination
+omega = 0  # right ascension of ascending node
+w = 0  # argument of perigee
+t = 0  # true anomaly
 
 # ---------------MAP CODE---------------
 root = Tk()
@@ -82,17 +63,6 @@ def cartesian_from_elements(a, e, inclin, omega, w, t):
     z = lro_orbit.r[2] / u.km
     return [x, y, z]
 
-"""
-# OLD FUNCTION - DO NOT TOUCH (whoops)
-def cart_to_spherical(x, y, z):
-    lro_orbit_astro = SkyCoord(representation_type='cartesian', x=x, y=y, z=z)
-    lat = float(lro_orbit_astro.represent_as(SphericalRepresentation).lat / u.rad)
-    long = float(lro_orbit_astro.represent_as(SphericalRepresentation).lon / u.rad)
-    # altitude = float(lro_orbit_astro.represent_as(SphericalRepresentation).distance / u.km)  # TODO: Add in calculation accounting for distance from surface to point
-    # print("[Lat, Long]: "+str([lat, long]))
-    # print("("+str(long)+","+str(lat)+")")
-    return [lat, long]
-"""
 # Function to convert from Cartesian coordinates (x, y, z) to geographic coordinates (long, lat)
 # Input  - Cartesian coordinates
 # Output - Array of latitude and longitude
