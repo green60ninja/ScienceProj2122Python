@@ -25,6 +25,12 @@ omega = 0  # right ascension of ascending node
 w = 0  # argument of perigee
 t = 0  # true anomaly
 
+a_2 = 0
+e_2 = 0
+inclin_2 = 0
+omega_2 = 0
+w_2 = 0
+
 # ---------------MAP CODE---------------
 root = Tk()
 canvas = Canvas(root, width=window_width // 2, height=window_width // 4)
@@ -83,7 +89,7 @@ def cart_to_spherical(x, y, z):
     long = long * (180 / math.pi) # Converting to decimal degrees from radians
 
     print("[Long, Lat]: "+str([long, lat]))
-    return [lat, long]
+    return [lat, long, r]
 
 # Function to compare two orbits' Cartesian coordinates to find a collision
 # Input  - (x1, y1, z1) and (x2, y2, z2) to compare
@@ -121,7 +127,7 @@ def plot_lat_long(lat, long, color):
 
 # ---------------UI CODE---------------
 def incremenet():
-    global t, a, e, inclin, omega, w, canvas
+    global t, a, e, inclin, omega, w, canvas, lat_long_stringvar_1, lat_long_stringvar_2
     while t1.is_alive():
         try:
             t += 0.1
@@ -138,12 +144,6 @@ def incremenet():
                 y = float(result[1])
                 z = float(result[2])
 
-                a_2 = float(input("a: "))
-                e_2 = float(input("e: "))
-                inclin_2 = float(input("i: "))
-                omega_2 = float(input("omega: "))
-                w_2 = float(input("w: "))
-
                 result2 = cartesian_from_elements(a=a_2, e=e_2, inclin=inclin_2, omega=omega_2, w=w_2, t=t)
                 x2 = float(result2[0])
                 y2 = float(result2[1])
@@ -155,13 +155,18 @@ def incremenet():
                 lat_long = cart_to_spherical(x, y, z)
                 lat = lat_long[0]
                 long = lat_long[1]
+                r = lat_long[2]
 
                 lat_long_2 = cart_to_spherical(x2, y2, z2)
                 lat2 = lat_long_2[0]
                 long2 = lat_long_2[1]
+                r2 = lat_long_2[2]
                 with open('values.csv', 'a', newline='') as file:
                     fwriter = csv.writer(file)
                     fwriter.writerow([long2, lat2])
+
+                lat_long_stringvar_1.set(f'Latitude: {lat}\nLongitude: {long}\nAltitude: {r}')
+                lat_long_stringvar_2.set(f'Latitude: {lat2}\nLongitude: {long2}\nAltitude: {r2}')
                 
                 # Plotting onto map
                 plot1_color = "yellow" if collide else "red"    # Color changes if collision (Input)
@@ -200,9 +205,17 @@ perigee_entry = Entry(root, width=25)
 perigee_entry.insert(0, "Argument of perigee")
 perigee_entry.pack()
 
+lat_long_stringvar_1 = StringVar(root, '')
+lat_long_label_1 = Label(root, textvariable=lat_long_stringvar_1)
+lat_long_label_1.pack(side=LEFT)
+
+lat_long_stringvar_2 = StringVar(root, '')
+lat_long_label_2 = Label(root, textvariable=lat_long_stringvar_2)
+lat_long_label_2.pack(side=RIGHT)
+
 
 def submit():
-    global a, e, inclin, omega, w, t, t_string
+    global a, e, inclin, omega, w, t, t_string, a_2, e_2, inclin_2, omega_2, w_2
     # print(semimajor_entry.get())
     # print(eccentricity_entry.get())
     # print(inclination_entry.get())
@@ -214,6 +227,12 @@ def submit():
         inclin = float(inclination_entry.get())
         omega = float(ascension_entry.get())
         w = float(perigee_entry.get())
+
+        a_2 = float(input("a: "))
+        e_2 = float(input("e: "))
+        inclin_2 = float(input("i: "))
+        omega_2 = float(input("omega: "))
+        w_2 = float(input("w: "))
     except ValueError:
         # Program lets user know if element values are invalid. (i.e. not a float)
         messagebox.showerror(title="ERROR", message="INVALID INPUT FOR ENTRY")
