@@ -138,7 +138,13 @@ def incremenet():
                 y = float(result[1])
                 z = float(result[2])
 
-                result2 = cartesian_from_elements(a=1795.224, e=0.019296, inclin=85.780, omega=128.208, w=246.531, t=t)
+                a_2 = float(input("a: "))
+                e_2 = float(input("e: "))
+                inclin_2 = float(input("i: "))
+                omega_2 = float(input("omega: "))
+                w_2 = float(input("w: "))
+
+                result2 = cartesian_from_elements(a=a_2, e=e_2, inclin=inclin_2, omega=omega_2, w=w_2, t=t)
                 x2 = float(result2[0])
                 y2 = float(result2[1])
                 z2 = float(result2[2])
