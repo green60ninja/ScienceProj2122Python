@@ -134,7 +134,7 @@ def incremenet():
             if t >= 360:
                 break
             # time.sleep(1)
-            t_string.set(str(t))
+            t_string.set("True anomaly: "+str(t))
             root.update_idletasks()
             
             if float(t_string.get()) != 0:
@@ -182,7 +182,7 @@ t1 = threading.Thread(target=incremenet)
 t_string = StringVar(root, '0')
 t2 = threading.Thread(target=plot_lro_orbit)  # Poliastro plot thread
 
-label = Label(root, text="Keplerian Elements:")
+label = Label(root, text="Orbit 1:")
 label.pack()
 
 # Entry for keplerian elements of orbit(s??)
@@ -205,6 +205,9 @@ ascension_entry.pack()
 perigee_entry = Entry(root, width=25)
 perigee_entry.insert(0, "Argument of perigee")
 perigee_entry.pack()
+
+label_2 = Label(root, text="Orbit 2:")
+label_2.pack()
 
 semimajor_entry_2 = Entry(root, width=25)
 semimajor_entry_2.insert(0, "Semi-major axis (2)")
@@ -300,6 +303,8 @@ def submit():
     inclination_entry_2.pack_forget()
     ascension_entry_2.pack_forget()
     perigee_entry_2.pack_forget()
+    label.pack_forget()
+    label_2.pack_forget()
 
 
 button = Button(root, text="Submit", command=submit)
