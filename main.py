@@ -185,6 +185,7 @@ t2 = threading.Thread(target=plot_lro_orbit)  # Poliastro plot thread
 label = Label(root, text="Keplerian Elements:")
 label.pack()
 
+# Entry for keplerian elements of orbit(s??)
 semimajor_entry = Entry(root, width=25)
 semimajor_entry.insert(0, "Semi-major axis")
 semimajor_entry.pack()
@@ -205,6 +206,27 @@ perigee_entry = Entry(root, width=25)
 perigee_entry.insert(0, "Argument of perigee")
 perigee_entry.pack()
 
+semimajor_entry_2 = Entry(root, width=25)
+semimajor_entry_2.insert(0, "Semi-major axis (2)")
+semimajor_entry_2.pack()
+
+eccentricity_entry_2 = Entry(root, width=25)
+eccentricity_entry_2.insert(0, "Eccentricity (2)")
+eccentricity_entry_2.pack()
+
+inclination_entry_2 = Entry(root, width=25)
+inclination_entry_2.insert(0, "Inclination (2)")
+inclination_entry_2.pack()
+
+ascension_entry_2 = Entry(root, width=25)
+ascension_entry_2.insert(0, "Right ascension of ascending node (2)")
+ascension_entry_2.pack()
+
+perigee_entry_2 = Entry(root, width=25)
+perigee_entry_2.insert(0, "Argument of perigee (2)")
+perigee_entry_2.pack()
+
+# For spherical coordinate readouts
 lat_long_stringvar_1 = StringVar(root, '')
 lat_long_label_1 = Label(root, textvariable=lat_long_stringvar_1)
 lat_long_label_1.pack(side=LEFT)
@@ -228,11 +250,11 @@ def submit():
         omega = float(ascension_entry.get())
         w = float(perigee_entry.get())
 
-        a_2 = float(input("a: "))
-        e_2 = float(input("e: "))
-        inclin_2 = float(input("i: "))
-        omega_2 = float(input("omega: "))
-        w_2 = float(input("w: "))
+        a_2 = float(semimajor_entry_2.get())
+        e_2 = float(eccentricity_entry_2.get())
+        inclin_2 = float(inclination_entry_2.get())
+        omega_2 = float(ascension_entry_2.get())
+        w_2 = float(perigee_entry_2.get())
     except ValueError:
         # Program lets user know if element values are invalid. (i.e. not a float)
         messagebox.showerror(title="ERROR", message="INVALID INPUT FOR ENTRY")
@@ -251,8 +273,19 @@ def submit():
     l4 = Label(frame, text="Argument of perigee: "+str(w))
     l4.pack()
 
+    l5 = Label(frame, text="Semi-major axis (2): "+str(a_2))
+    l5.pack()
+    l6 = Label(frame, text="Eccentricity (2): "+str(e_2))
+    l6.pack()
+    l7 = Label(frame, text="Inclination (2): "+str(inclin_2))
+    l7.pack()
+    l8 = Label(frame, text="Right ascension of ascending node (2): " + str(omega_2))
+    l8.pack()
+    l9 = Label(frame, text="Argument of perigee (2): "+str(w_2))
+    l9.pack()
+
     t1.start()
-    t2.start()
+    # t2.start()
     l5 = Label(frame, textvariable=t_string).pack()
 
     semimajor_entry.pack_forget()
@@ -261,6 +294,12 @@ def submit():
     ascension_entry.pack_forget()
     perigee_entry.pack_forget()
     button.pack_forget()
+
+    semimajor_entry_2.pack_forget()
+    eccentricity_entry_2.pack_forget()
+    inclination_entry_2.pack_forget()
+    ascension_entry_2.pack_forget()
+    perigee_entry_2.pack_forget()
 
 
 button = Button(root, text="Submit", command=submit)
