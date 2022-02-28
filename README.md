@@ -17,12 +17,12 @@ Science Project for ISEF 2021-22 (Now in Python)
  - Run 'main.py'
 
 ## Test values
-Semimajor axis: 1760
+Semimajor axis: 1795.224
 
-Eccentricity: 0
+Eccentricity: 0.019296
 
-Inclination: 45
+Inclination: 45 / 85.780
 
-Right ascension of ascending node: 0
+Right ascension of ascending node: 128.208
 
-Argument of perigee: 0
+Argument of perigee: 246.531
