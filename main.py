@@ -134,7 +134,7 @@ def incremenet():
             if t >= 360:
                 break
             # time.sleep(1)
-            t_string.set("True anomaly: "+str(t))
+            t_string.set(str(t))
             root.update_idletasks()
             
             if float(t_string.get()) != 0:
@@ -185,26 +185,32 @@ t2 = threading.Thread(target=plot_lro_orbit)  # Poliastro plot thread
 label = Label(root, text="Orbit 1:")
 label.pack()
 
-# Entry for keplerian elements of orbit(s??)
+# Entry for keplerian elements of orbits
+
 semimajor_entry = Entry(root, width=25)
 semimajor_entry.insert(0, "Semi-major axis")
 semimajor_entry.pack()
+semimajor_entry.bind('<Button-1>', lambda event: semimajor_entry.delete(0, END))
 
 eccentricity_entry = Entry(root, width=25)
 eccentricity_entry.insert(0, "Eccentricity")
 eccentricity_entry.pack()
+eccentricity_entry.bind('<Button-1>', lambda event: eccentricity_entry.delete(0, END))
 
 inclination_entry = Entry(root, width=25)
 inclination_entry.insert(0, "Inclination")
 inclination_entry.pack()
+inclination_entry.bind('<Button-1>', lambda event: inclination_entry.delete(0, END))
 
 ascension_entry = Entry(root, width=25)
 ascension_entry.insert(0, "Right ascension of ascending node")
 ascension_entry.pack()
+ascension_entry.bind('<Button-1>', lambda event: ascension_entry.delete(0, END))
 
 perigee_entry = Entry(root, width=25)
 perigee_entry.insert(0, "Argument of perigee")
 perigee_entry.pack()
+perigee_entry.bind('<Button-1>', lambda event: perigee_entry.delete(0, END))
 
 label_2 = Label(root, text="Orbit 2:")
 label_2.pack()
@@ -212,22 +218,27 @@ label_2.pack()
 semimajor_entry_2 = Entry(root, width=25)
 semimajor_entry_2.insert(0, "Semi-major axis (2)")
 semimajor_entry_2.pack()
+semimajor_entry_2.bind('<Button-1>', lambda event: semimajor_entry_2.delete(0, END))
 
 eccentricity_entry_2 = Entry(root, width=25)
 eccentricity_entry_2.insert(0, "Eccentricity (2)")
 eccentricity_entry_2.pack()
+eccentricity_entry_2.bind('<Button-1>', lambda event: eccentricity_entry_2.delete(0, END))
 
 inclination_entry_2 = Entry(root, width=25)
 inclination_entry_2.insert(0, "Inclination (2)")
 inclination_entry_2.pack()
+inclination_entry_2.bind('<Button-1>', lambda event: inclination_entry_2.delete(0, END))
 
 ascension_entry_2 = Entry(root, width=25)
 ascension_entry_2.insert(0, "Right ascension of ascending node (2)")
 ascension_entry_2.pack()
+ascension_entry_2.bind('<Button-1>', lambda event: ascension_entry_2.delete(0, END))
 
 perigee_entry_2 = Entry(root, width=25)
 perigee_entry_2.insert(0, "Argument of perigee (2)")
 perigee_entry_2.pack()
+perigee_entry_2.bind('<Button-1>', lambda event: perigee_entry_2.delete(0, END))
 
 # For spherical coordinate readouts
 lat_long_stringvar_1 = StringVar(root, '')
